@@ -52,15 +52,20 @@ public class AnswersFragment extends Fragment implements AdapterView.OnItemClick
             inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
+        // when rendering a list item
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             if(v == null) {
                 v = inflater.inflate(R.layout.answers_list_item, null);
             }
+            // retrieve the text view
             TextView answerText = (TextView) v.findViewById(R.id.answer_text);
             if(answerText == null) return null;
+            // show the corresponding answer
             answerText.setText(answers.get(position));
+            // determine whether the checkbox should be checked
             CheckBox cBox = (CheckBox) v.findViewById(R.id.checkBox);
             if(cBox != null) {
                 // only check the box if the current answer is the selected answer
@@ -79,6 +84,7 @@ public class AnswersFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // load the saved state if available
         Bundle args = getArguments();
         if(args != null) {
             selectedAnswer = args.getString("SELECTED_ANSWER");
@@ -108,6 +114,7 @@ public class AnswersFragment extends Fragment implements AdapterView.OnItemClick
         // bind the adapter to the list view
         answersList.setAdapter(adapter);
         answersList.setOnItemClickListener(this);
+        // on click listener for the delete button
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,16 +167,21 @@ public class AnswersFragment extends Fragment implements AdapterView.OnItemClick
             cBox = answersList.getChildAt(answers.indexOf(selectedAnswer)).findViewById(R.id.checkBox);
             if(cBox == null) return;
             cBox.setChecked(false);
+            // if we've unchecked the previously selected answer
             if(selectedAnswer.equals(currentAnswer)) {
+                // notify other fragments and stop here
                 selectedAnswer = null;
                 notifyOtherFragments();
                 return;
             }
         }
+        // in case no answer was selected
         cBox = answersList.getChildAt(position).findViewById(R.id.checkBox);
         if(cBox == null) return;
+        // toggle check
         cBox.setChecked(!cBox.isChecked());
         if(cBox.isChecked()) selectedAnswer = currentAnswer;
+        // let the rest of the app know about the update
         notifyOtherFragments();
     }
 }
